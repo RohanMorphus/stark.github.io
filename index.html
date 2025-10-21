@@ -1,44 +1,455 @@
-<!DOCTYPE html>
+<!--
+  index.html — Personal portfolio for Rohan Prajapati (cyber security engineer)
+  - Dark / futuristic style, responsive, animated.
+  - Replace `resume.pdf` with your real resume file in the repo root.
+  - To split into files: move everything in <style> to style.css and <script> to script.js, then link them.
+  - Contact form: currently uses mailto fallback. To receive messages, register at https://formspree.io or Netlify forms and replace <form action="..."> value.
+-->
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stark | Portfolio</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Rohan Prajapati — Cyber Security Engineer</title>
+  <meta name="description" content="Rohan Prajapati — Cyber security engineer. Portfolio showcasing skills, projects, and contact information." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap">
+  <meta name="theme-color" content="#071127" />
+  <style>
+    :root{
+      --bg:#071127;
+      --card:#0f1a2b;
+      --muted:#8da0c8;
+      --accent:#39ffdd;
+      --accent-2:#7c5cff;
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.02);
+      --radius:14px;
+      --maxw:1100px;
+      --mono: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      min-height:100%;
+      font-family:var(--mono);
+      background:
+        radial-gradient(1200px 600px at 10% 10%, rgba(60,90,220,0.06), transparent 10%),
+        radial-gradient(1000px 500px at 90% 90%, rgba(60,200,180,0.03), transparent 10%),
+        var(--bg);
+      color:#d7e7ff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+
+    /* layout */
+    .wrap{display:flex;min-height:100vh;max-width:1300px;margin:40px auto;padding:20px;gap:24px}
+    .sidebar{
+      width:300px;
+      min-width:240px;
+      background:linear-gradient(180deg,var(--glass),var(--glass-2));
+      border-radius:var(--radius);
+      padding:28px;
+      position:sticky;top:28px;height:calc(100vh - 56px);
+      box-shadow: 0 6px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.03);
+      display:flex;flex-direction:column;gap:18px;
+      backdrop-filter: blur(6px);
+    }
+    .profile{
+      display:flex;gap:16px;align-items:center;
+    }
+    .avatar{
+      flex:0 0 72px;
+      height:72px;border-radius:14px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      box-shadow: 0 6px 20px rgba(124,92,255,0.14);
+      display:grid;place-items:center;color:#072233;font-weight:800;font-size:20px;
+    }
+    .name{font-size:1.1rem;font-weight:700;margin:0}
+    .role{font-size:0.85rem;color:var(--muted);margin-top:4px}
+
+    .nav{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+    .nav a{
+      display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;color:var(--muted);
+      text-decoration:none;font-weight:600;font-size:0.95rem;
+    }
+    .nav a.active, .nav a:hover{
+      background:linear-gradient(90deg, rgba(57,255,221,0.06), rgba(124,92,255,0.04));
+      color:var(--accent);
+      box-shadow: inset 0 0 20px rgba(124,92,255,0.02);
+    }
+
+    .sidebar .socials{display:flex;gap:10px;margin-top:auto}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#031122;font-weight:700;text-decoration:none}
+    .small{font-size:0.86rem;color:var(--muted)}
+
+    /* main content */
+    .main{
+      flex:1;
+      background:transparent;
+      padding:18px 12px;
+    }
+    .section{
+      max-width:var(--maxw);
+      margin:40px 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.005), transparent);
+      border-radius:12px;padding:26px;border:1px solid rgba(255,255,255,0.02);
+      transform:translateY(18px);
+      opacity:0;transition: all 700ms cubic-bezier(.2,.9,.2,1);
+    }
+    .section.visible{transform:none;opacity:1}
+    .hero{
+      display:flex;align-items:center;justify-content:space-between;gap:24px;
+      padding:36px;border-radius:12px;background:linear-gradient(180deg, rgba(10,18,35,0.32), rgba(10,18,35,0.18));
+      box-shadow: 0 10px 40px rgba(4,8,20,0.6);
+    }
+    .hero-left{flex:1;min-width:260px}
+    h1{font-size:2rem;margin:0;line-height:1.05}
+    .tagline{color:var(--muted);margin-top:10px;font-weight:500}
+
+    .cta-row{margin-top:18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    .ghost{padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.05);color:var(--muted);background:transparent;text-decoration:none}
+
+    /* skills */
+    .skills-grid{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+    .skill{flex:1 1 230px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);padding:14px;border-radius:10px}
+    .skill h4{margin:0 0 8px 0;font-size:0.95rem}
+    .meter{height:10px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden}
+    .meter > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;transition:width 1100ms cubic-bezier(.2,.9,.2,1)}
+
+    /* projects */
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);transition:transform .28s cubic-bezier(.2,.9,.2,1), box-shadow .28s}
+    .card:hover{transform:translateY(-8px);box-shadow: 0 16px 40px rgba(0,0,0,0.5)}
+    .card h3{margin:0 0 8px 0}
+    .card p{color:var(--muted);margin:0 0 12px 0;font-size:0.95rem}
+    .tags{display:flex;gap:8px;flex-wrap:wrap}
+    .tag{font-size:0.8rem;padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted)}
+
+    /* contact */
+    .contact-grid{display:grid;grid-template-columns:1fr 360px;gap:18px}
+    form{display:flex;flex-direction:column;gap:12px}
+    input, textarea{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);padding:12px;border-radius:8px;color:inherit}
+    textarea{min-height:140px;resize:vertical}
+    .muted{color:var(--muted);font-size:0.95rem}
+
+    footer{margin-top:32px;color:var(--muted);font-size:0.9rem}
+
+    /* responsive */
+    @media (max-width:980px){
+      .wrap{padding:16px;flex-direction:column}
+      .sidebar{position:relative;top:0;height:auto;width:100%}
+      .contact-grid{grid-template-columns:1fr}
+      .hero{flex-direction:column;align-items:flex-start}
+    }
+
+    /* small helper */
+    .right{display:flex;flex-direction:column;gap:12px;align-items:flex-end}
+    .project-links{display:flex;gap:10px;flex-wrap:wrap}
+    a.icon{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.02);text-decoration:none;color:var(--muted);font-weight:600}
+    .chip{padding:6px 8px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:700}
+  </style>
 </head>
 <body>
-  <header>
-    <h1>Hi, I'm Stark 👋</h1>
-    <p>Cybersecurity Enthusiast | Developer | Problem Solver</p>
-  </header>
+  <div class="wrap" role="main">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" aria-label="Sidebar">
+      <div class="profile">
+        <div class="avatar">RP</div>
+        <div>
+          <div class="name">Rohan Prajapati</div>
+          <div class="role">Cyber Security Engineer</div>
+        </div>
+      </div>
 
-  <section id="about">
-    <h2>About Me</h2>
-    <p>I’m passionate about cybersecurity, building secure systems, and exploring ethical hacking challenges.</p>
-  </section>
+      <nav class="nav" aria-label="Primary">
+        <a href="#home" class="nav-link active">Home</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#skills" class="nav-link">Skills</a>
+        <a href="#projects" class="nav-link">Projects</a>
+        <a href="#contact" class="nav-link">Contact</a>
+      </nav>
 
-  <section id="projects">
-    <h2>Projects</h2>
-    <div class="project">
-      <h3>Network Security Analyzer</h3>
-      <p>Python-based tool to detect vulnerabilities in small networks.</p>
-    </div>
-    <div class="project">
-      <h3>Phishing Detection Web App</h3>
-      <p>Flask app that classifies URLs as safe or malicious using ML.</p>
-    </div>
-  </section>
+      <div style="margin-top:6px">
+        <a class="btn" href="resume.pdf" download>Download Resume</a>
+      </div>
 
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>Email: stark@example.com</p>
-    <p>LinkedIn: <a href="https://linkedin.com/in/yourprofile">yourprofile</a></p>
-  </section>
+      <div class="socials" aria-hidden>
+        <a class="icon" href="https://www.linkedin.com/in/rohan-prajapati-massonix/" target="_blank" rel="noopener noreferrer">
+          <!-- LinkedIn SVG -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M4.98 3.5C4.98 4.88071 3.88071 6 2.5 6C1.11929 6 0 4.88071 0 3.5C0 2.11929 1.11929 1 2.5 1C3.88071 1 4.98 2.11929 4.98 3.5Z" fill="currentColor"/><path d="M0 8.99H5V24H0V8.99ZM8.5 8.99H13.07V10.85H13.15C13.87 9.69 15.59 8.48 18.12 8.48C23.02 8.48 24 11.41 24 15.92V24H19V16.95C19 14.9 18.48 13.26 16.12 13.26C13.77 13.26 13.18 15.01 13.18 16.8V24H8.5V8.99Z" fill="currentColor"/></svg>
+          LinkedIn
+        </a>
+        <a class="icon" href="https://github.com/yourgithub" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </div>
+    </aside>
 
-  <footer>
-    <p>© 2025 Stark. All rights reserved.</p>
-  </footer>
+    <!-- MAIN -->
+    <main class="main">
+      <!-- HERO -->
+      <section id="home" class="section hero">
+        <div class="hero-left">
+          <h1>Rohan Prajapati</h1>
+          <div class="tagline">Protecting systems, empowering users — building secure and resilient digital platforms.</div>
+          <div class="cta-row">
+            <a class="btn" href="resume.pdf" download>Get Resume</a>
+            <a class="ghost" href="#projects">View Projects</a>
+          </div>
 
-  <script src="script.js"></script>
+          <div style="margin-top:18px" class="muted">
+            <strong>Email:</strong> <a href="mailto:rohan@massonix.com" style="color:var(--accent);text-decoration:none">rohan@massonix.com</a>
+            &nbsp;&nbsp;•&nbsp;&nbsp;
+            <strong>Location:</strong> India
+          </div>
+        </div>
+        <div class="right">
+          <div class="chip">Open to opportunities</div>
+          <div style="width:220px;">
+            <div style="height:140px;border-radius:12px;background:linear-gradient(135deg, rgba(57,255,221,0.06), rgba(124,92,255,0.06));display:flex;align-items:center;justify-content:center;flex-direction:column">
+              <div style="font-weight:700;font-size:16px">Key Focus</div>
+              <div class="muted" style="font-size:13px;margin-top:6px">Infrastructure security · Web app pentesting · Secure dev</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="about" class="section" aria-labelledby="about-heading">
+        <h2 id="about-heading">About</h2>
+        <p class="muted" style="margin-top:8px">
+          I'm Rohan — a cyber security engineer focused on defending web systems, automating security workflows, and performing practical assessments that help teams ship safer software.
+          I enjoy building tools to make security faster, simpler and more integrated with development workflows.
+        </p>
+        <div style="display:flex;gap:18px;margin-top:16px;flex-wrap:wrap">
+          <div style="flex:1;min-width:280px">
+            <div class="small" style="margin-bottom:8px">Experience</div>
+            <div class="card"><strong>Penetration testing</strong> — Web & network pentests, vuln triage, exploit validation.</div>
+            <div style="height:10px"></div>
+            <div class="card"><strong>Secure engineering</strong> — Threat modelling, secure design, CI/CD hardening.</div>
+          </div>
+          <div style="flex:1;min-width:260px">
+            <div class="small" style="margin-bottom:8px">Tools & Tech</div>
+            <div class="tags">
+              <div class="tag">Burp Suite</div><div class="tag">Nmap</div><div class="tag">Python</div>
+              <div class="tag">Docker</div><div class="tag">Kubernetes</div><div class="tag">AWS</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SKILLS -->
+      <section id="skills" class="section">
+        <h2>Skills</h2>
+        <div class="skills-grid">
+          <div class="skill">
+            <h4>Application Security</h4>
+            <div class="meter"><i data-width="92%"></i></div>
+          </div>
+          <div class="skill">
+            <h4>Network Security</h4>
+            <div class="meter"><i data-width="86%"></i></div>
+          </div>
+          <div class="skill">
+            <h4>Automation & Scripting</h4>
+            <div class="meter"><i data-width="80%"></i></div>
+          </div>
+          <div class="skill">
+            <h4>Cloud Security</h4>
+            <div class="meter"><i data-width="74%"></i></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROJECTS -->
+      <section id="projects" class="section">
+        <h2>Projects</h2>
+        <p class="muted" style="margin-top:8px">A few highlights — click to view code or live demos (replace links with your repo/demo links).</p>
+        <div class="projects-grid">
+          <article class="card">
+            <h3>Network Security Analyzer</h3>
+            <p>CLI tool that runs targeted scans, aggregates results, and produces prioritized remediation reports.</p>
+            <div style="margin-top:10px" class="project-links">
+              <a class="icon" href="#" target="_blank" rel="noreferrer">Repo</a>
+              <a class="icon" href="#" target="_blank" rel="noreferrer">Demo</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>Phish-URL Classifier</h3>
+            <p>Flask webapp using ML heuristics to classify suspicious URLs and provide indicators for analysts.</p>
+            <div style="margin-top:10px" class="project-links">
+              <a class="icon" href="#" target="_blank" rel="noreferrer">Repo</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3>Secure CI Templates</h3>
+            <p>Reusable templates to harden CI pipelines — secrets scanning, least-privilege runners, and SCA checks.</p>
+            <div style="margin-top:10px" class="project-links">
+              <a class="icon" href="#" target="_blank" rel="noreferrer">Repo</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- CONTACT -->
+      <section id="contact" class="section" aria-labelledby="contact-heading">
+        <h2 id="contact-heading">Contact</h2>
+        <div class="muted" style="margin-top:8px">Want to collaborate, consult, or recruit? Send a message below or email me directly at <a href="mailto:rohan@massonix.com" style="color:var(--accent)">rohan@massonix.com</a>.</div>
+
+        <div style="margin-top:18px" class="contact-grid">
+          <div>
+            <!-- NOTE: Replace the form action with your Formspree or Netlify --> 
+            <form id="contactForm" method="post" action="mailto:rohan@massonix.com">
+              <input type="text" name="name" placeholder="Your name" required>
+              <input type="email" name="email" placeholder="Your email" required>
+              <input type="text" name="subject" placeholder="Subject" required>
+              <textarea name="message" placeholder="Message..." required></textarea>
+              <div style="display:flex;gap:10px;align-items:center">
+                <button type="submit" class="btn">Send Message</button>
+                <div class="muted" style="font-size:0.85rem">Or email: <a href="mailto:rohan@massonix.com" style="color:var(--accent)">rohan@massonix.com</a></div>
+              </div>
+            </form>
+          </div>
+
+          <aside style="background:var(--card);padding:18px;border-radius:10px">
+            <h4>Contact details</h4>
+            <p class="muted" style="margin-top:6px">
+              <strong>Email</strong><br>
+              rohan@massonix.com
+            </p>
+            <p class="muted">
+              <strong>LinkedIn</strong><br>
+              <a href="https://www.linkedin.com/in/rohan-prajapati-massonix/" target="_blank" rel="noreferrer" style="color:var(--accent)">rohan-prajapati-massonix</a>
+            </p>
+            <p class="muted">
+              <strong>Location</strong><br>India
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <footer>
+        © <span id="year"></span> Rohan Prajapati — Built with care.
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    // small utilities: smooth scroll and nav active state
+    document.documentElement.style.scrollBehavior = 'smooth';
+
+    // highlight nav links on click and when sections appear
+    const links = Array.from(document.querySelectorAll('.nav-link'));
+    links.forEach(a => {
+      a.addEventListener('click', (e) => {
+        links.forEach(x => x.classList.remove('active'));
+        a.classList.add('active');
+      });
+    });
+
+    // Intersection Observer to reveal sections and set active nav
+    const sections = document.querySelectorAll('.section');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          entry.target.classList.add('visible');
+          const id = entry.target.id || entry.target.querySelector('h2')?.id;
+          if(id){
+            // find nav link
+            links.forEach(l => {
+              l.classList.toggle('active', l.getAttribute('href') === `#${id}`);
+            });
+          }
+        }
+      });
+    }, { threshold: 0.18 });
+
+    sections.forEach(s => io.observe(s));
+
+    // animate skill bars when visible
+    const meters = document.querySelectorAll('.meter > i');
+    const meterObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if(e.isIntersecting){
+          const el = e.target;
+          const w = el.getAttribute('data-width') || '70%';
+          el.style.width = w;
+          meterObserver.unobserve(el);
+        }
+      });
+    }, {threshold:0.3});
+    meters.forEach(m => meterObserver.observe(m));
+
+    // show current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // animated tiny particles background (very light)
+    // (keeps perf light — small glow dots using canvas)
+    (function(){
+      const canvas = document.createElement('canvas');
+      canvas.style.position = 'fixed';
+      canvas.style.left=0;canvas.style.top=0;canvas.style.zIndex=0;
+      canvas.style.pointerEvents='none';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      let W=canvas.width = innerWidth;
+      let H=canvas.height = innerHeight;
+      const particles = [];
+      const count = Math.max(12, Math.floor((W*H)/120000));
+      for(let i=0;i<count;i++){
+        particles.push({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          r: 0.6 + Math.random()*1.6,
+          vx: (Math.random()-0.5)*0.2,
+          vy: (Math.random()-0.5)*0.2,
+          alpha: 0.06 + Math.random()*0.08
+        });
+      }
+      function loop(){
+        ctx.clearRect(0,0,W,H);
+        particles.forEach(p=>{
+          p.x += p.vx;
+          p.y += p.vy;
+          if(p.x<0) p.x = W;
+          if(p.x>W) p.x = 0;
+          if(p.y<0) p.y = H;
+          if(p.y>H) p.y = 0;
+          const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*6);
+          g.addColorStop(0, `rgba(57,255,221,${p.alpha})`);
+          g.addColorStop(1, 'rgba(124,92,255,0)');
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          ctx.arc(p.x,p.y,p.r*6,0,Math.PI*2);
+          ctx.fill();
+        });
+        requestAnimationFrame(loop);
+      }
+      window.addEventListener('resize', () => {
+        W = canvas.width = innerWidth;
+        H = canvas.height = innerHeight;
+      });
+      loop();
+    })();
+
+    // Optional: intercept contact form submit and use Formspree if configured
+    (function(){
+      const form = document.getElementById('contactForm');
+      if(!form) return;
+      form.addEventListener('submit', function(e){
+        // If action contains mailto: we allow the browser to handle it.
+        // If you'd like to POST to Formspree, set form.action to your Formspree endpoint.
+        if(form.action && form.action.startsWith('mailto:')) {
+          // let default behaviour continue (browser will open mail client)
+          return;
+        }
+        // For custom AJAX, you can implement fetch here (example omitted).
+      });
+    })();
+  </script>
 </body>
 </html>
